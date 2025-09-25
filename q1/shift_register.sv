@@ -9,13 +9,18 @@ module shift_register #(parameter N=4)
                        output logic serial_out);
 
     always_ff @(posedge clk or negedge rst_n) begin
-        if (load_enable) begin
-            if (serial_parallel) begin
-                // Parallel loading
-                parallel_out <= parallel_in;
-            end else begin
-                // Serial loading (shift left)
-                parallel_out <= {parallel_out[N-2:0], serial_in};
+        if (!rst_n) begin
+            parallel_out <= '0; // Reset to zeros
+            serial_out <= 0;
+        end else begin
+            if (load_enable) begin
+                if (serial_parallel) begin
+                    // Parallel loading
+                    parallel_out <= parallel_in;
+                end else begin
+                    // Serial loading (shift left)
+                    parallel_out <= {parallel_out[N-2:0], serial_in};
+                end
             end
         end
     end
